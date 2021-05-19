@@ -1,17 +1,17 @@
 import {toDataURL} from 'qrcode';
 
-interface ICanvasProps {
+export interface ICanvasProps {
     width: number;
     height: number;
 }
 
-interface ICallback<T> {
+export interface ICallback<T> {
     (ctx: CanvasRenderingContext2D, canvasProps: ICanvasProps, items: T): void
 }
 
 type ImageType = 'avatar' | 'qrcode';
 
-interface IImage {
+export interface IImage {
     x: number;
     y: number;
     width: number;
@@ -23,7 +23,7 @@ interface IImage {
     callback?: ICallback<IImage>;
 }
 
-interface IText {
+export interface IText {
     x: number;
     y: number;
     width?: number;
@@ -38,7 +38,7 @@ interface IText {
     callback?: ICallback<IText>;
 }
 
-interface IRoundRects {
+export interface IRoundRects {
     x: number;
     y: number;
     width: number;
@@ -48,21 +48,21 @@ interface IRoundRects {
     callback?: ICallback<IRoundRects>;
 }
 
-interface ISource {
+export interface ISource {
     images?: IImage[];
     texts?: IText[];
     roundRects?: IRoundRects[];
 }
 
-interface IJson2canvas {
+export interface IJson2canvas {
     (canvasProps: ICanvasProps, scale: number, source: ISource): Promise<{ url: string }>
 }
 
-interface IImageList extends IImage {
+export interface IImageList extends IImage {
     img: HTMLImageElement;
 }
 
-interface IFillRoundRect {
+export interface IFillRoundRect {
     (cxt: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, fillColor?: string): void
 }
 
