@@ -1,2 +1,3 @@
 # 排除 lib文件
 lib/
+.github/
