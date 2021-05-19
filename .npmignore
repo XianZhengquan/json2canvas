@@ -3,3 +3,5 @@ lib/
 .github/
 node_modules/
 .idea
+.editorconfig
+tsconfig.json
