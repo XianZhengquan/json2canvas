@@ -3,12 +3,11 @@
         "target": "es5",
         "strict": true,
         "module": "commonjs",
-        "outDir": "./dist",
-        "declaration": false,
+        "outDir": "",
+        "declaration": true,
         "lib": [
             "dom",
             "es5",
-            "scripthost",
             "es2015.promise"
         ]
     }
