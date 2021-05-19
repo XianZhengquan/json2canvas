@@ -1,6 +1,6 @@
 {
     "name": "json-to-canvas",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "json2canvas",
     "main": "index.js",
     "scripts": {
@@ -13,7 +13,11 @@
     },
     "keywords": [
         "json",
-        "canvas"
+        "to",
+        "canvas",
+        "json-to",
+        "to-canvas",
+        "json-to-canvas"
     ],
     "author": "yasuo",
     "license": "ISC",
