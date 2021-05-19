@@ -2,3 +2,4 @@
 lib/
 .github/
 node_modules/
+.idea
