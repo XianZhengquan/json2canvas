@@ -1,2 +1,7 @@
 # 排除 lib文件
 lib/
+.github/
+node_modules/
+.idea
+.editorconfig
+tsconfig.json
