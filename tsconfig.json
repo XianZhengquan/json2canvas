@@ -5,6 +5,7 @@
         "module": "commonjs",
         "outDir": "",
         "declaration": true,
+        "module": "ESNext",
         "lib": [
             "dom",
             "es5",

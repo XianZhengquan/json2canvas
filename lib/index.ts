@@ -124,45 +124,6 @@ const drawRoundRectPath: IDrawRoundRectPath = (cxt, width, height, radius) => {
     cxt.closePath();
 };
 
-// 处理二维码
-const generateImgUrl = (imgUrl: string) => {
-    let objectUrl = null;
-    if (imgUrl.match(/^data:(.*);base64,/) && window.URL && URL.createObjectURL) {
-        objectUrl = URL.createObjectURL(dataURL2blob(imgUrl));
-        //
-        imgUrl = objectUrl;
-        return imgUrl;
-    }
-};
-const dataURL2blob = (dataURL: string) => {
-    const binaryString = atob(dataURL.split(',')[1]);
-    const arrayBuffer = new ArrayBuffer(binaryString.length);
-    const intArray = new Uint8Array(arrayBuffer);
-    // @ts-ignore
-    const mime = dataURL.split(',')[0].match(/:(.*?);/)[1];
-    for (let i = 0, j = binaryString.length; i < j; i += 1) {
-        intArray[i] = binaryString.charCodeAt(i);
-    }
-    const data = [intArray];
-    let result;
-    try {
-        result = new Blob(data, {type: mime});
-    } catch (error) {
-        // @ts-ignore
-        window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
-        // @ts-ignore
-        if (error.name === 'TypeError' && window.BlobBuilder) {
-            // @ts-ignore
-            const builder = new window.BlobBuilder();
-            builder.append(arrayBuffer);
-            result = builder.getBlob();
-        } else {
-            throw new Error('没救了');
-        }
-    }
-    return result;
-};
-
 interface ITextAutoBreak {
     (cxt: CanvasRenderingContext2D, textParams: IText, width: number): void
 }
@@ -297,19 +258,16 @@ const textAutoBreak: ITextAutoBreak = (
             if (ctx.measureText(beforeTxt + txt + nextTxt).width < width) {
                 strSet.set(currentIndex, beforeTxt + txt);
             } else {
-                // eslint-disable-next-line no-plusplus
                 strSet.set(++currentIndex, txt);
             }
         } else if (ctx.measureText(beforeTxt).width < width) {
             strSet.set(currentIndex, beforeTxt + txt);
         } else {
-            // eslint-disable-next-line no-plusplus
             strSet.set(++currentIndex, txt);
         }
     });
 
-    // @ts-ignore
-    const texts: string[] = [...strSet.values()];
+    const texts: string[] = Array.from(strSet.values());
 
     texts.forEach((item, index) => {
         if (index === 0) {
@@ -334,7 +292,8 @@ const json2canvas: IJson2canvas = async (canvasProps = {width: 375, height: 607}
         try {
             if (item.name === 'qrcode') {
                 toDataURL(document.createElement('canvas'), item.url, (err, res) => {
-                    if (!err) item.url = generateImgUrl(res) as string;
+                    // if (!err) item.url = generateImgUrl(res) as string;
+                    if (!err) item.url = res;
                 });
             }
             const imgItem = await loadImage(item.url);
