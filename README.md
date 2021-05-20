@@ -2,9 +2,9 @@
 
 ## Install
 ```shell
-npm i json2canvas
+npm i json-to-canvas
 # or
-yarn add json2canvas
+yarn add json-to-canvas
 ```
 
 ## how to use
