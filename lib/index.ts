@@ -76,7 +76,7 @@ export interface IFillRoundRect {
  * @param {number} radius:圆的半径
  * @param {string} fillColor:填充颜色
  **/
-const fillRoundRect: IFillRoundRect = (cxt, x, y, width, height, radius, fillColor) => {
+export const fillRoundRect: IFillRoundRect = (cxt, x, y, width, height, radius, fillColor) => {
     //圆的直径必然要小于矩形的宽高
     if (2 * radius > width || 2 * radius > height) {
         return false;
@@ -95,7 +95,7 @@ interface IDrawRoundRectPath {
     (cxt: CanvasRenderingContext2D, width: number, height: number, radius: number): void
 }
 
-const drawRoundRectPath: IDrawRoundRectPath = (cxt, width, height, radius) => {
+export const drawRoundRectPath: IDrawRoundRectPath = (cxt, width, height, radius) => {
     // @ts-ignore
     cxt.beginPath(0);
     //从右下角顺时针绘制，弧度从0到1/2PI
@@ -142,7 +142,7 @@ interface ITextAutoBreak {
  * @param {number} width 文本区域宽度 超过宽度换行
  * @description 这里接受的所有数值参数都是经过scale了的
  */
-const textAutoBreak: ITextAutoBreak = (
+export const textAutoBreak: ITextAutoBreak = (
     ctx,
     textParams = {
         x: 0,
