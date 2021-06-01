@@ -125,7 +125,7 @@ export const drawRoundRectPath: IDrawRoundRectPath = (cxt, width, height, radius
 };
 
 interface ITextAutoBreak {
-    (cxt: CanvasRenderingContext2D, textParams: IText, width: number): void
+    (cxt: CanvasRenderingContext2D, textParams: IText, width: number, returns?: boolean): number | void;
 }
 
 /**
@@ -155,7 +155,8 @@ export const textAutoBreak: ITextAutoBreak = (
         textAlign: 'left',
         textBaseline: 'middle'
     },
-    width
+    width,
+    returns
 ) => {
     const {
         x,
@@ -276,6 +277,8 @@ export const textAutoBreak: ITextAutoBreak = (
             ctx.fillText(item, x, y + index * lineHeight);
         }
     });
+
+    if(returns) return texts.length * lineHeight;
 };
 
 const json2canvas: IJson2canvas = async (canvasProps = {width: 375, height: 607}, scale = 2, source) => {
