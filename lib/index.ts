@@ -1,4 +1,4 @@
-import {toDataURL} from 'qrcode';
+import { toDataURL } from 'qrcode';
 
 export interface ICanvasProps {
     width: number;
@@ -20,7 +20,8 @@ export interface IImage {
     name?: ImageType;
     borderColor?: string;
     lineWidth?: number;
-    callback?: ICallback<IImage>;
+    order?: number;
+    callback?: ICallback<IImageList>;
 }
 
 export interface IText {
@@ -35,6 +36,7 @@ export interface IText {
     font?: string;
     textAlign?: CanvasTextAlign;
     textBaseline?: CanvasTextBaseline;
+    order?: number;
     callback?: ICallback<IText>;
 }
 
@@ -45,17 +47,25 @@ export interface IRoundRects {
     height: number;
     radius: number;
     color?: string;
+    order?: number;
     callback?: ICallback<IRoundRects>;
 }
 
-export interface ISource {
+export type ISourceArray =
+    (IImage & { type: 'image' })
+    | (IText & { type: 'text' })
+    | (IRoundRects & { type: 'round-rect' });
+
+export interface ISourceObject {
     images?: IImage[];
     texts?: IText[];
     roundRects?: IRoundRects[];
 }
 
+export type SourceType = ISourceArray[] | ISourceObject;
+
 export interface IJson2canvas {
-    (canvasProps: ICanvasProps, scale: number, source: ISource): Promise<{ url: string }>
+    (canvasProps: ICanvasProps, scale: number, source: SourceType): Promise<{ url: string }>
 }
 
 export interface IImageList extends IImage {
@@ -64,6 +74,14 @@ export interface IImageList extends IImage {
 
 export interface IFillRoundRect {
     (cxt: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, fillColor?: string): void
+}
+
+interface IDrawRoundRectPath {
+    (cxt: CanvasRenderingContext2D, width: number, height: number, radius: number): void
+}
+
+interface ITextAutoBreak {
+    (cxt: CanvasRenderingContext2D, textParams: IText, width: number, returns?: boolean): number | void;
 }
 
 /**
@@ -90,10 +108,6 @@ export const fillRoundRect: IFillRoundRect = (cxt, x, y, width, height, radius, 
     cxt.fill();
     cxt.restore();
 };
-
-interface IDrawRoundRectPath {
-    (cxt: CanvasRenderingContext2D, width: number, height: number, radius: number): void
-}
 
 export const drawRoundRectPath: IDrawRoundRectPath = (cxt, width, height, radius) => {
     // @ts-ignore
@@ -124,10 +138,6 @@ export const drawRoundRectPath: IDrawRoundRectPath = (cxt, width, height, radius
     cxt.closePath();
 };
 
-interface ITextAutoBreak {
-    (cxt: CanvasRenderingContext2D, textParams: IText, width: number, returns?: boolean): number | void;
-}
-
 /**
  * canvas 文字自动换行
  * @param ctx
@@ -142,22 +152,7 @@ interface ITextAutoBreak {
  * @param {number} width 文本区域宽度 超过宽度换行
  * @description 这里接受的所有数值参数都是经过scale了的
  */
-export const textAutoBreak: ITextAutoBreak = (
-    ctx,
-    textParams = {
-        x: 0,
-        y: 0,
-        text: '',
-        size: 12,
-        color: '#000000',
-        font: 'PingFangSC-Medium',
-        lineHeight: 12,
-        textAlign: 'left',
-        textBaseline: 'middle'
-    },
-    width,
-    returns
-) => {
+export const textAutoBreak: ITextAutoBreak = (ctx, textParams, width, returns) => {
     const {
         x,
         y,
@@ -172,7 +167,7 @@ export const textAutoBreak: ITextAutoBreak = (
     const strSet = new Map<number, string>();
 
     ctx.fillStyle = color;
-    ctx.font = `${size}px ${font}`;
+    ctx.font = `${ size }px ${ font }`;
     ctx.textAlign = textAlign;
     ctx.textBaseline = textBaseline;
 
@@ -270,6 +265,8 @@ export const textAutoBreak: ITextAutoBreak = (
 
     const texts: string[] = Array.from(strSet.values());
 
+    if (returns) return texts.length * lineHeight;
+
     texts.forEach((item, index) => {
         if (index === 0) {
             ctx.fillText(item, x, y);
@@ -277,137 +274,240 @@ export const textAutoBreak: ITextAutoBreak = (
             ctx.fillText(item, x, y + index * lineHeight);
         }
     });
-
-    if(returns) return texts.length * lineHeight;
 };
 
-const json2canvas: IJson2canvas = async (canvasProps = {width: 375, height: 607}, scale = 2, source) => {
+const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607 }, scale = 2, source) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     canvas.width = canvasProps.width * scale;
     canvas.height = canvasProps.height * scale;
-
-    const {images = [], texts = [], roundRects = []} = source;
-
-    // 加载图片
-    const imageList: IImageList[] = [];
-    for (const item of images) {
-        try {
-            if (item.name === 'qrcode') {
-                toDataURL(document.createElement('canvas'), item.url, (err, res) => {
-                    // if (!err) item.url = generateImgUrl(res) as string;
-                    if (!err) item.url = res;
-                });
+    if (Array.isArray(source)) {
+        for (const item of source) {
+            if (item.type === 'image') {
+                // 加载图片
+                try {
+                    if (item.name === 'qrcode') {
+                        toDataURL(document.createElement('canvas'), item.url, (err, res) => {
+                            // if (!err) item.url = generateImgUrl(res) as string;
+                            if (!err) item.url = res;
+                        });
+                    }
+                    const imgItem = await loadImage(item.url);
+                    const {
+                        x,
+                        y,
+                        width,
+                        height,
+                        borderColor = '#ffffff',
+                        lineWidth = 4,
+                        callback
+                    } = item;
+                    if (callback) {
+                        callback(ctx, { width: canvas.width, height: canvas.height }, { ...item, img: imgItem });
+                    } else if (item.name === 'avatar') {
+                        // 在 clip() 之前保存canvas状态
+                        ctx.save();
+                        ctx.strokeStyle = borderColor;
+                        ctx.lineWidth = lineWidth * scale;
+                        ctx.beginPath();
+                        ctx.arc(
+                            (x + width / 2) * scale,
+                            (y + width / 2) * scale,
+                            (width * scale) / 2,
+                            0,
+                            2 * Math.PI,
+                            false
+                        );
+                        ctx.stroke();
+                        ctx.clip();
+                        ctx.drawImage(imgItem, x * scale, y * scale, width * scale, height * scale);
+                        // 恢复到上面save()时的状态
+                        ctx.restore();
+                    } else {
+                        ctx.drawImage(imgItem, x * scale, y * scale, width * scale, height * scale);
+                    }
+                } catch (e) {
+                    return Promise.reject(`图片加载错误：${ item.name ?? '图片名称' } - ${ item.url }`);
+                }
+            } else if (item.type === 'round-rect') {
+                const { width, height, x, y, radius, color, callback } = item;
+                if (callback) {
+                    callback(ctx, { width: canvas.width, height: canvas.height }, item);
+                } else {
+                    fillRoundRect(
+                        ctx,
+                        x * scale,
+                        y * scale,
+                        width * scale,
+                        height * scale,
+                        radius * scale,
+                        color
+                    );
+                }
+            } else if (item.type === 'text') {
+                const {
+                    x,
+                    y,
+                    size,
+                    text,
+                    font = 'PingFangSC-Medium',
+                    color = '#000',
+                    textAlign = 'left',
+                    textBaseline = 'middle',
+                    autoBreak = false,
+                    lineHeight = 24,
+                    width = 0,
+                    callback
+                } = item;
+                if (callback) {
+                    callback(ctx, { width: canvas.width, height: canvas.height }, item);
+                } else if (autoBreak) {
+                    textAutoBreak(
+                        ctx,
+                        {
+                            x: x * scale,
+                            y: y * scale,
+                            text,
+                            font,
+                            color,
+                            textAlign,
+                            textBaseline,
+                            size: size * scale,
+                            lineHeight: lineHeight * scale
+                        },
+                        width * 2
+                    );
+                } else {
+                    ctx.fillStyle = color;
+                    ctx.font = `${ size * scale }px ${ font }`;
+                    ctx.textAlign = textAlign;
+                    ctx.textBaseline = textBaseline;
+                    ctx.fillText(text, x * scale, y * scale);
+                }
             }
-            const imgItem = await loadImage(item.url);
-            imageList.push({...item, img: imgItem});
-        } catch (e) {
-            return Promise.reject(`图片加载错误：${item.name ?? '图片名称'} - ${item.url}`);
         }
+    } else {
+        const { images = [], texts = [], roundRects = [] } = source;
+
+        // 加载图片
+        const imageList: IImageList[] = [];
+        for (const item of images) {
+            try {
+                if (item.name === 'qrcode') {
+                    toDataURL(document.createElement('canvas'), item.url, (err, res) => {
+                        // if (!err) item.url = generateImgUrl(res) as string;
+                        if (!err) item.url = res;
+                    });
+                }
+                const imgItem = await loadImage(item.url);
+                imageList.push({ ...item, img: imgItem });
+            } catch (e) {
+                return Promise.reject(`图片加载错误：${ item.name ?? '图片名称' } - ${ item.url }`);
+            }
+        }
+
+        // 绘制图片
+        if (imageList?.length > 0)
+            imageList.forEach(image => {
+                const {
+                    x,
+                    y,
+                    width,
+                    height,
+                    img,
+                    borderColor = '#ffffff',
+                    lineWidth = 4,
+                    callback
+                } = image;
+                if (callback) {
+                    callback(ctx, { width: canvas.width, height: canvas.height }, image);
+                } else if (image.name === 'avatar') {
+                    // 在 clip() 之前保存canvas状态
+                    ctx.save();
+                    ctx.strokeStyle = borderColor;
+                    ctx.lineWidth = lineWidth * scale;
+                    ctx.beginPath();
+                    ctx.arc(
+                        (x + width / 2) * scale,
+                        (y + width / 2) * scale,
+                        (width * scale) / 2,
+                        0,
+                        2 * Math.PI,
+                        false
+                    );
+                    ctx.stroke();
+                    ctx.clip();
+                    ctx.drawImage(img, x * scale, y * scale, width * scale, height * scale);
+                    // 恢复到上面save()时的状态
+                    ctx.restore();
+                } else {
+                    ctx.drawImage(img, x * scale, y * scale, width * scale, height * scale);
+                }
+            });
+
+        // 绘制圆角矩形
+        if (roundRects?.length > 0)
+            roundRects.forEach(rr => {
+                const { width, height, x, y, radius, color, callback } = rr;
+                if (callback) {
+                    callback(ctx, { width: canvas.width, height: canvas.height }, rr);
+                } else {
+                    fillRoundRect(
+                        ctx,
+                        x * scale,
+                        y * scale,
+                        width * scale,
+                        height * scale,
+                        radius * scale,
+                        color
+                    );
+                }
+            });
+
+        // 绘制文字
+        if (texts?.length > 0)
+            texts.forEach(txt => {
+                const {
+                    x,
+                    y,
+                    size,
+                    text,
+                    font = 'PingFangSC-Medium',
+                    color = '#000',
+                    textAlign = 'left',
+                    textBaseline = 'middle',
+                    autoBreak = false,
+                    lineHeight = 24,
+                    width = 0,
+                    callback
+                } = txt;
+                if (callback) {
+                    callback(ctx, { width: canvas.width, height: canvas.height }, txt);
+                } else if (autoBreak) {
+                    textAutoBreak(
+                        ctx,
+                        {
+                            x: x * scale,
+                            y: y * scale,
+                            text,
+                            font,
+                            color,
+                            textAlign,
+                            textBaseline,
+                            size: size * scale,
+                            lineHeight: lineHeight * scale
+                        },
+                        width * 2
+                    );
+                } else {
+                    ctx.fillStyle = color;
+                    ctx.font = `${ size * scale }px ${ font }`;
+                    ctx.textAlign = textAlign;
+                    ctx.textBaseline = textBaseline;
+                    ctx.fillText(text, x * scale, y * scale);
+                }
+            });
     }
-
-    // 绘制图片
-    if (imageList?.length > 0)
-        imageList.forEach(image => {
-            const {
-                x,
-                y,
-                width,
-                height,
-                img,
-                borderColor = '#ffffff',
-                lineWidth = 4,
-                callback
-            } = image;
-            if (callback) {
-                callback(ctx, {width: canvas.width, height: canvas.height}, image);
-            } else if (image.name === 'avatar') {
-                // 在 clip() 之前保存canvas状态
-                ctx.save();
-                ctx.strokeStyle = borderColor;
-                ctx.lineWidth = lineWidth * scale;
-                ctx.beginPath();
-                ctx.arc(
-                    (x + width / 2) * scale,
-                    (y + width / 2) * scale,
-                    (width * scale) / 2,
-                    0,
-                    2 * Math.PI,
-                    false
-                );
-                ctx.stroke();
-                ctx.clip();
-                ctx.drawImage(img, x * scale, y * scale, width * scale, height * scale);
-                // 恢复到上面save()时的状态
-                ctx.restore();
-            } else {
-                ctx.drawImage(img, x * scale, y * scale, width * scale, height * scale);
-            }
-        });
-
-    // 绘制圆角矩形
-    if (roundRects?.length > 0)
-        roundRects.forEach(rr => {
-            const {width, height, x, y, radius, color, callback} = rr;
-            if (callback) {
-                callback(ctx, {width: canvas.width, height: canvas.height}, rr);
-            } else {
-                fillRoundRect(
-                    ctx,
-                    x * scale,
-                    y * scale,
-                    width * scale,
-                    height * scale,
-                    radius * scale,
-                    color
-                );
-            }
-        });
-
-    // 绘制文字
-    if (texts?.length > 0)
-        texts.forEach(txt => {
-            const {
-                x,
-                y,
-                size,
-                text,
-                font = 'PingFangSC-Medium',
-                color = '#000',
-                textAlign = 'left',
-                textBaseline = 'middle',
-                autoBreak = false,
-                lineHeight = 24,
-                width = 0,
-                callback
-            } = txt;
-            if (callback) {
-                callback(ctx, {width: canvas.width, height: canvas.height}, txt);
-            } else if (autoBreak) {
-                textAutoBreak(
-                    ctx,
-                    {
-                        x: x * scale,
-                        y: y * scale,
-                        text,
-                        font,
-                        color,
-                        textAlign,
-                        textBaseline,
-                        size: size * scale,
-                        lineHeight: lineHeight * scale
-                    },
-                    width * 2
-                );
-            } else {
-                ctx.fillStyle = color;
-                ctx.font = `${size * scale}px ${font}`;
-                ctx.textAlign = textAlign;
-                ctx.textBaseline = textBaseline;
-                ctx.fillText(text, x * scale, y * scale);
-            }
-        });
-
     return {
         url: canvas.toDataURL('image/png')
     };

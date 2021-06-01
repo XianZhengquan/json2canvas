@@ -5,3 +5,5 @@ node_modules/
 .idea
 .editorconfig
 tsconfig.json
+yarn.lock
+yarn-error.log

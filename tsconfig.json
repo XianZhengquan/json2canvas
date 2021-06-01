@@ -3,8 +3,10 @@
         "target": "es5",
         "strict": true,
         "module": "commonjs",
-        "outDir": "",
+        "allowJs": false,
+        "outDir": "./dist",
         "declaration": true,
+        "declarationDir": "",
         "module": "ESNext",
         "lib": [
             "dom",
