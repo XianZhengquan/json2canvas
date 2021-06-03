@@ -249,6 +249,12 @@ export const textAutoBreak: ITextAutoBreak = (ctx, textParams, width, returns) =
         // 下一个字符
         const nextTxt = text[index + 1];
 
+        // 当前字符是\n 的unicode编码\u000A为则自动换行， txt表示当前行
+        if (text[index].charCodeAt(0).toString(16) === 'a') {
+            strSet.set(++currentIndex, '');
+            return;
+        }
+
         // 如果下一个字符是 标点符号
         if (punctuation.includes(nextTxt)) {
             if (ctx.measureText(beforeTxt + txt + nextTxt).width < width) {
