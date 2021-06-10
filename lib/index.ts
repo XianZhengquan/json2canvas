@@ -34,7 +34,7 @@ export interface IText {
     color?: string;
     size: number;
     font?: string;
-    fontFamily?:string;
+    fontWeight?: string;
     textAlign?: CanvasTextAlign;
     textBaseline?: CanvasTextBaseline;
     order?: number;
@@ -162,14 +162,14 @@ export const textAutoBreak: ITextAutoBreak = (ctx, textParams, width, returns) =
         color = '#000000',
         lineHeight = 12,
         font = 'PingFangSC-Medium',
-        fontFamily='',
+        fontWeight = '',
         textAlign = 'left',
         textBaseline = 'middle'
     } = textParams;
     const strSet = new Map<number, string>();
 
     ctx.fillStyle = color;
-    ctx.font = `${ font } ${ size }px ${fontFamily}`;
+    ctx.font = `${ fontWeight } ${ size }px ${ font }`;
     ctx.textAlign = textAlign;
     ctx.textBaseline = textBaseline;
 
@@ -359,7 +359,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     size,
                     text,
                     font = 'PingFangSC-Medium',
-                    fontFamily = '',
+                    fontWeight = '',
                     color = '#000',
                     textAlign = 'left',
                     textBaseline = 'middle',
@@ -378,7 +378,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                             y: y * scale,
                             text,
                             font,
-                            fontFamily,
+                            fontWeight,
                             color,
                             textAlign,
                             textBaseline,
@@ -389,7 +389,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     );
                 } else {
                     ctx.fillStyle = color;
-                    ctx.font = `${ font } ${ size * scale }px ${fontFamily}`;
+                    ctx.font = `${ fontWeight } ${ size * scale }px ${ font }`;
                     ctx.textAlign = textAlign;
                     ctx.textBaseline = textBaseline;
                     ctx.fillText(text, x * scale, y * scale);
@@ -483,7 +483,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     size,
                     text,
                     font = 'PingFangSC-Medium',
-                    fontFamily='',
+                    fontWeight = '',
                     color = '#000',
                     textAlign = 'left',
                     textBaseline = 'middle',
@@ -502,6 +502,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                             y: y * scale,
                             text,
                             font,
+                            fontWeight,
                             color,
                             textAlign,
                             textBaseline,
@@ -512,7 +513,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     );
                 } else {
                     ctx.fillStyle = color;
-                    ctx.font = `${ font } ${ size * scale }px ${fontFamily}`;
+                    ctx.font = ` ${ fontWeight } ${ size * scale }px ${ font }`;
                     ctx.textAlign = textAlign;
                     ctx.textBaseline = textBaseline;
                     ctx.fillText(text, x * scale, y * scale);

@@ -105,10 +105,10 @@ export var drawRoundRectPath = function (cxt, width, height, radius) {
  * @description 这里接受的所有数值参数都是经过scale了的
  */
 export var textAutoBreak = function (ctx, textParams, width, returns) {
-    var x = textParams.x, y = textParams.y, text = textParams.text, size = textParams.size, _a = textParams.color, color = _a === void 0 ? '#000000' : _a, _b = textParams.lineHeight, lineHeight = _b === void 0 ? 12 : _b, _c = textParams.font, font = _c === void 0 ? 'PingFangSC-Medium' : _c, _d = textParams.textAlign, textAlign = _d === void 0 ? 'left' : _d, _e = textParams.textBaseline, textBaseline = _e === void 0 ? 'middle' : _e;
+    var x = textParams.x, y = textParams.y, text = textParams.text, size = textParams.size, _a = textParams.color, color = _a === void 0 ? '#000000' : _a, _b = textParams.lineHeight, lineHeight = _b === void 0 ? 12 : _b, _c = textParams.font, font = _c === void 0 ? 'PingFangSC-Medium' : _c, _d = textParams.fontWeight, fontWeight = _d === void 0 ? '' : _d, _e = textParams.textAlign, textAlign = _e === void 0 ? 'left' : _e, _f = textParams.textBaseline, textBaseline = _f === void 0 ? 'middle' : _f;
     var strSet = new Map();
     ctx.fillStyle = color;
-    ctx.font = size + "px " + font;
+    ctx.font = fontWeight + " " + size + "px " + font;
     ctx.textAlign = textAlign;
     ctx.textBaseline = textBaseline;
     // 中文标点符号
@@ -187,6 +187,11 @@ export var textAutoBreak = function (ctx, textParams, width, returns) {
         var beforeTxt = (_a = strSet.get(currentIndex)) !== null && _a !== void 0 ? _a : '';
         // 下一个字符
         var nextTxt = text[index + 1];
+        // 当前字符是\n 的unicode编码\u000A为则自动换行， txt表示当前行
+        if (text[index].charCodeAt(0).toString(16) === 'a') {
+            strSet.set(++currentIndex, '');
+            return;
+        }
         // 如果下一个字符是 标点符号
         if (punctuation.includes(nextTxt)) {
             if (ctx.measureText(beforeTxt + txt + nextTxt).width < width) {
@@ -230,14 +235,14 @@ var json2canvas = function (canvasProps, scale, source) {
                     canvas.height = canvasProps.height * scale;
                     if (!Array.isArray(source)) return [3 /*break*/, 5];
                     _loop_1 = function (item) {
-                        var imgItem, x, y, width, height, _h, borderColor, _j, lineWidth, callback, e_1, width, height, x, y, radius, color, callback, x, y, size, text, _k, font, _l, color, _m, textAlign, _o, textBaseline, _p, autoBreak, _q, lineHeight, _r, width, callback;
-                        return __generator(this, function (_s) {
-                            switch (_s.label) {
+                        var imgItem, x, y, width, height, _h, borderColor, _j, lineWidth, callback, e_1, width, height, x, y, radius, color, callback, x, y, size, text, _k, font, _l, fontWeight, _m, color, _o, textAlign, _p, textBaseline, _q, autoBreak, _r, lineHeight, _s, width, callback;
+                        return __generator(this, function (_t) {
+                            switch (_t.label) {
                                 case 0:
                                     if (!(item.type === 'image')) return [3 /*break*/, 5];
-                                    _s.label = 1;
+                                    _t.label = 1;
                                 case 1:
-                                    _s.trys.push([1, 3, , 4]);
+                                    _t.trys.push([1, 3, , 4]);
                                     if (item.name === 'qrcode') {
                                         toDataURL(document.createElement('canvas'), item.url, function (err, res) {
                                             // if (!err) item.url = generateImgUrl(res) as string;
@@ -247,7 +252,7 @@ var json2canvas = function (canvasProps, scale, source) {
                                     }
                                     return [4 /*yield*/, loadImage(item.url)];
                                 case 2:
-                                    imgItem = _s.sent();
+                                    imgItem = _t.sent();
                                     x = item.x, y = item.y, width = item.width, height = item.height, _h = item.borderColor, borderColor = _h === void 0 ? '#ffffff' : _h, _j = item.lineWidth, lineWidth = _j === void 0 ? 4 : _j, callback = item.callback;
                                     if (callback) {
                                         callback(ctx, { width: canvas.width, height: canvas.height }, __assign(__assign({}, item), { img: imgItem }));
@@ -270,7 +275,7 @@ var json2canvas = function (canvasProps, scale, source) {
                                     }
                                     return [3 /*break*/, 4];
                                 case 3:
-                                    e_1 = _s.sent();
+                                    e_1 = _t.sent();
                                     return [2 /*return*/, { value: Promise.reject("\u56FE\u7247\u52A0\u8F7D\u9519\u8BEF\uFF1A" + ((_e = item.name) !== null && _e !== void 0 ? _e : '图片名称') + " - " + item.url) }];
                                 case 4: return [3 /*break*/, 6];
                                 case 5:
@@ -284,7 +289,7 @@ var json2canvas = function (canvasProps, scale, source) {
                                         }
                                     }
                                     else if (item.type === 'text') {
-                                        x = item.x, y = item.y, size = item.size, text = item.text, _k = item.font, font = _k === void 0 ? 'PingFangSC-Medium' : _k, _l = item.color, color = _l === void 0 ? '#000' : _l, _m = item.textAlign, textAlign = _m === void 0 ? 'left' : _m, _o = item.textBaseline, textBaseline = _o === void 0 ? 'middle' : _o, _p = item.autoBreak, autoBreak = _p === void 0 ? false : _p, _q = item.lineHeight, lineHeight = _q === void 0 ? 24 : _q, _r = item.width, width = _r === void 0 ? 0 : _r, callback = item.callback;
+                                        x = item.x, y = item.y, size = item.size, text = item.text, _k = item.font, font = _k === void 0 ? 'PingFangSC-Medium' : _k, _l = item.fontWeight, fontWeight = _l === void 0 ? '' : _l, _m = item.color, color = _m === void 0 ? '#000' : _m, _o = item.textAlign, textAlign = _o === void 0 ? 'left' : _o, _p = item.textBaseline, textBaseline = _p === void 0 ? 'middle' : _p, _q = item.autoBreak, autoBreak = _q === void 0 ? false : _q, _r = item.lineHeight, lineHeight = _r === void 0 ? 24 : _r, _s = item.width, width = _s === void 0 ? 0 : _s, callback = item.callback;
                                         if (callback) {
                                             callback(ctx, { width: canvas.width, height: canvas.height }, item);
                                         }
@@ -294,6 +299,7 @@ var json2canvas = function (canvasProps, scale, source) {
                                                 y: y * scale,
                                                 text: text,
                                                 font: font,
+                                                fontWeight: fontWeight,
                                                 color: color,
                                                 textAlign: textAlign,
                                                 textBaseline: textBaseline,
@@ -303,13 +309,13 @@ var json2canvas = function (canvasProps, scale, source) {
                                         }
                                         else {
                                             ctx.fillStyle = color;
-                                            ctx.font = size * scale + "px " + font;
+                                            ctx.font = fontWeight + " " + size * scale + "px " + font;
                                             ctx.textAlign = textAlign;
                                             ctx.textBaseline = textBaseline;
                                             ctx.fillText(text, x * scale, y * scale);
                                         }
                                     }
-                                    _s.label = 6;
+                                    _t.label = 6;
                                 case 6: return [2 /*return*/];
                             }
                         });
@@ -334,10 +340,10 @@ var json2canvas = function (canvasProps, scale, source) {
                     imageList = [];
                     _loop_2 = function (item) {
                         var imgItem, e_2;
-                        return __generator(this, function (_t) {
-                            switch (_t.label) {
+                        return __generator(this, function (_u) {
+                            switch (_u.label) {
                                 case 0:
-                                    _t.trys.push([0, 2, , 3]);
+                                    _u.trys.push([0, 2, , 3]);
                                     if (item.name === 'qrcode') {
                                         toDataURL(document.createElement('canvas'), item.url, function (err, res) {
                                             // if (!err) item.url = generateImgUrl(res) as string;
@@ -347,11 +353,11 @@ var json2canvas = function (canvasProps, scale, source) {
                                     }
                                     return [4 /*yield*/, loadImage(item.url)];
                                 case 1:
-                                    imgItem = _t.sent();
+                                    imgItem = _u.sent();
                                     imageList.push(__assign(__assign({}, item), { img: imgItem }));
                                     return [3 /*break*/, 3];
                                 case 2:
-                                    e_2 = _t.sent();
+                                    e_2 = _u.sent();
                                     return [2 /*return*/, { value: Promise.reject("\u56FE\u7247\u52A0\u8F7D\u9519\u8BEF\uFF1A" + ((_f = item.name) !== null && _f !== void 0 ? _f : '图片名称') + " - " + item.url) }];
                                 case 3: return [2 /*return*/];
                             }
@@ -410,7 +416,7 @@ var json2canvas = function (canvasProps, scale, source) {
                     // 绘制文字
                     if ((texts === null || texts === void 0 ? void 0 : texts.length) > 0)
                         texts.forEach(function (txt) {
-                            var x = txt.x, y = txt.y, size = txt.size, text = txt.text, _a = txt.font, font = _a === void 0 ? 'PingFangSC-Medium' : _a, _b = txt.color, color = _b === void 0 ? '#000' : _b, _c = txt.textAlign, textAlign = _c === void 0 ? 'left' : _c, _d = txt.textBaseline, textBaseline = _d === void 0 ? 'middle' : _d, _e = txt.autoBreak, autoBreak = _e === void 0 ? false : _e, _f = txt.lineHeight, lineHeight = _f === void 0 ? 24 : _f, _g = txt.width, width = _g === void 0 ? 0 : _g, callback = txt.callback;
+                            var x = txt.x, y = txt.y, size = txt.size, text = txt.text, _a = txt.font, font = _a === void 0 ? 'PingFangSC-Medium' : _a, _b = txt.fontWeight, fontWeight = _b === void 0 ? '' : _b, _c = txt.color, color = _c === void 0 ? '#000' : _c, _d = txt.textAlign, textAlign = _d === void 0 ? 'left' : _d, _e = txt.textBaseline, textBaseline = _e === void 0 ? 'middle' : _e, _f = txt.autoBreak, autoBreak = _f === void 0 ? false : _f, _g = txt.lineHeight, lineHeight = _g === void 0 ? 24 : _g, _h = txt.width, width = _h === void 0 ? 0 : _h, callback = txt.callback;
                             if (callback) {
                                 callback(ctx, { width: canvas.width, height: canvas.height }, txt);
                             }
@@ -420,6 +426,7 @@ var json2canvas = function (canvasProps, scale, source) {
                                     y: y * scale,
                                     text: text,
                                     font: font,
+                                    fontWeight: fontWeight,
                                     color: color,
                                     textAlign: textAlign,
                                     textBaseline: textBaseline,
@@ -429,7 +436,7 @@ var json2canvas = function (canvasProps, scale, source) {
                             }
                             else {
                                 ctx.fillStyle = color;
-                                ctx.font = size * scale + "px " + font;
+                                ctx.font = " " + fontWeight + " " + size * scale + "px " + font;
                                 ctx.textAlign = textAlign;
                                 ctx.textBaseline = textBaseline;
                                 ctx.fillText(text, x * scale, y * scale);
