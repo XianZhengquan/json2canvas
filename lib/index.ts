@@ -389,7 +389,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     );
                 } else {
                     ctx.fillStyle = color;
-                    ctx.font = `${ font } ${ size }px ${fontFamily}`;
+                    ctx.font = `${ font } ${ size * scale }px ${fontFamily}`;
                     ctx.textAlign = textAlign;
                     ctx.textBaseline = textBaseline;
                     ctx.fillText(text, x * scale, y * scale);
@@ -512,7 +512,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     );
                 } else {
                     ctx.fillStyle = color;
-                    ctx.font = `${ font } ${ size }px ${fontFamily}`;
+                    ctx.font = `${ font } ${ size * scale }px ${fontFamily}`;
                     ctx.textAlign = textAlign;
                     ctx.textBaseline = textBaseline;
                     ctx.fillText(text, x * scale, y * scale);
