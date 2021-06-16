@@ -164,7 +164,7 @@ export const textAutoBreak: ITextAutoBreak = (ctx, textParams, width, returns) =
         font = 'PingFangSC-Medium',
         fontWeight = '',
         textAlign = 'left',
-        textBaseline = 'middle'
+        textBaseline = 'top'
     } = textParams;
     const strSet = new Map<number, string>();
 
@@ -362,7 +362,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     fontWeight = '',
                     color = '#000',
                     textAlign = 'left',
-                    textBaseline = 'middle',
+                    textBaseline = 'top',
                     autoBreak = false,
                     lineHeight = 24,
                     width = 0,
@@ -486,7 +486,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
                     fontWeight = '',
                     color = '#000',
                     textAlign = 'left',
-                    textBaseline = 'middle',
+                    textBaseline = 'top',
                     autoBreak = false,
                     lineHeight = 24,
                     width = 0,
