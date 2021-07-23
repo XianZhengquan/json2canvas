@@ -1,5 +1,6 @@
 # 排除 lib文件
 lib/
+src/
 .github/
 node_modules/
 .idea
