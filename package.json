@@ -1,6 +1,6 @@
 {
     "name": "json-to-canvas",
-    "version": "0.1.6",
+    "version": "1.0.0",
     "description": "json-to-canvas",
     "main": "dist/index.js",
     "scripts": {
