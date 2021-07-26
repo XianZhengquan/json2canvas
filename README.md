@@ -33,7 +33,11 @@ const sourceArray: Json2canvasSource[] = [
     }
 ]
 
-json2canvas({ width: 300, height: 400 }, 2, sourceArray)
+json2canvas({
+    canvasProps: { width: 300, height: 400 },
+    scale:2,
+    source:sourceArray
+})
     .then(url => {
         console.log(url);
     })
@@ -44,10 +48,10 @@ json2canvas({ width: 300, height: 400 }, 2, sourceArray)
 
 ## API
 
-| api | 描述 |
-| :---- | :---- |
-| `json2canvas` | 通过参数获得画图数据 |
-| `getTextHeight` | 获取多行文本的高度 |
+| api | 描述 | 类型 |
+| :---- | :---- | :---- |
+| `json2canvas` | 通过参数获得画图数据 | (props: IJson2canvasProps) => Promise<string> |
+| `getTextHeight` | 获取多行文本的高度 | (ctx: CanvasRenderingContext2D, props: ITextAutoBreakProps) => number |
 
 ## 更新
 
@@ -58,3 +62,8 @@ json2canvas({ width: 300, height: 400 }, 2, sourceArray)
 - 优化了代码结构
 - 修改了 `json2canvas` 的返回值, `Promise<{url: string}>` =>>> `Promise<string>`
 - 增加了 `getTextHeight` 方法，以获取多行文本的高度
+
+
+> 2021年7月26日
+
+- 更新 md 文档
