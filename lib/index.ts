@@ -533,7 +533,7 @@ const json2canvas: IJson2canvas = async (canvasProps = { width: 375, height: 607
 function loadImage(url: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
         const imgItem = new Image();
-        if (url.match(/^https?/)) imgItem.crossOrigin = 'anonymous';
+        imgItem.crossOrigin = 'anonymous';
         imgItem.onload = () => {
             resolve(imgItem);
         };
