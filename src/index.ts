@@ -31,47 +31,50 @@ export const json2canvas: Json2canvas = async (props) => {
                     if (!err) sourceItem.url = res;
                 });
             }
-            const Image = await loadImage(sourceItem.url);
-
-            if (callback) {
-                callback(
-                    ctx,
-                    {
-                        width: canvas.width,
-                        height: canvas.height
-                    },
-                    {
-                        x,
-                        y,
-                        width,
-                        height,
-                        borderColor,
-                        lineWidth,
-                        url: sourceItem.url,
-                        image: Image
-                    }
-                );
-            } else if (name === ImageName.Avatar) {
-                // 在 clip() 之前保存canvas状态
-                ctx.save();
-                ctx.strokeStyle = borderColor;
-                ctx.lineWidth = lineWidth * scale;
-                ctx.beginPath();
-                ctx.arc(
-                    x + width / 2,
-                    y + width / 2,
-                    width / 2,
-                    0,
-                    2 * Math.PI,
-                    false
-                );
-                ctx.stroke();
-                ctx.clip();
-                ctx.drawImage(Image, x, y, width, height);
-                // 恢复到上面save()时的状态
-                ctx.restore();
-            } else {
-                ctx.drawImage(Image, x, y, width, height);
+            try {
+                const Image = await loadImage(sourceItem.url);
+                if (callback) {
+                    callback(
+                        ctx,
+                        {
+                            width: canvas.width,
+                            height: canvas.height
+                        },
+                        {
+                            x,
+                            y,
+                            width,
+                            height,
+                            borderColor,
+                            lineWidth,
+                            url: sourceItem.url,
+                            image: Image
+                        }
+                    );
+                } else if (name === ImageName.Avatar) {
+                    // 在 clip() 之前保存canvas状态
+                    ctx.save();
+                    ctx.strokeStyle = borderColor;
+                    ctx.lineWidth = lineWidth * scale;
+                    ctx.beginPath();
+                    ctx.arc(
+                        x + width / 2,
+                        y + width / 2,
+                        width / 2,
+                        0,
+                        2 * Math.PI,
+                        false
+                    );
+                    ctx.stroke();
+                    ctx.clip();
+                    ctx.drawImage(Image, x, y, width, height);
+                    // 恢复到上面save()时的状态
+                    ctx.restore();
+                } else {
+                    ctx.drawImage(Image, x, y, width, height);
+                }
+            } catch (e) {
+                console.error(e, `图片地址：${ sourceItem.url }`);
             }
         } else if (sourceItem.type === SourceItemType.Text) {
             const {
