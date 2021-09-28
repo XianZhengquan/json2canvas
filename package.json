@@ -1,32 +1,40 @@
 {
-    "name": "json-to-canvas",
-    "version": "1.0.4",
-    "description": "json-to-canvas",
-    "main": "dist/index.js",
-    "scripts": {
-        "build": "tsc",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/XianZhengquan/json2canvas.git"
-    },
-    "keywords": [
-        "json",
-        "to",
-        "canvas",
-        "json-to",
-        "to-canvas",
-        "json-to-canvas"
-    ],
-    "author": "yasuo",
-    "license": "ISC",
-    "homepage": "https://github.com/XianZhengquan/json2canvas#readme",
-    "devDependencies": {
-        "@types/qrcode": "^1.4.0",
-        "typescript": "^4.2.4"
-    },
-    "dependencies": {
-        "qrcode": "^1.4.4"
-    }
+  "name": "json-to-canvas",
+  "version": "1.0.5",
+  "description": "json-to-canvas",
+  "entry": "src/index.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "unpkg": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -r -f ./dist && rollup -c"
+  },
+  "keywords": [
+    "json",
+    "to",
+    "canvas",
+    "json-to",
+    "to-canvas",
+    "json-to-canvas"
+  ],
+  "author": "yasuo",
+  "license": "ISC",
+  "homepage": "https://github.com/XianZhengquan/json2canvas#readme",
+  "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.5",
+    "@types/qrcode": "^1.4.1",
+    "rollup": "^2.57.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "qrcode": "^1.4.4"
+  }
 }
