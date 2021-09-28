@@ -36,5 +36,8 @@
   },
   "dependencies": {
     "qrcode": "^1.4.4"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
   }
 }
