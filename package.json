@@ -1,6 +1,6 @@
 {
   "name": "json-to-canvas",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "json-to-canvas",
   "entry": "src/index.ts",
   "main": "dist/index.cjs.js",
@@ -8,7 +8,7 @@
   "unpkg": "dist/index.umd.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rm -r -f ./dist && rollup -c"
+    "build": "cross-env NODE_ENV=production rollup -c"
   },
   "keywords": [
     "json",
@@ -27,8 +27,10 @@
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.5",
     "@types/qrcode": "^1.4.1",
+    "cross-env": "^7.0.3",
     "rollup": "^2.57.0",
     "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-polyfill-node": "^0.7.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "tslib": "^2.3.1",
