@@ -1,4 +1,4 @@
-export type {
+export {
   SourceItemType,
   ImageName,
   Json2canvasSource,
