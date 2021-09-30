@@ -1,25 +1,15 @@
 {
   "compilerOptions": {
-    "sourceMap": false,
-    "module": "ESNext",
-    "target": "ES2015",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "skipLibCheck": true,
-    "declaration": true,
-    "noEmit": true,
-    "allowSyntheticDefaultImports": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "es5",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true
+    "module": "ESNext",
+    "outDir": "./dist",
+    "declaration": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ]
   },
   "include": [
     "src"

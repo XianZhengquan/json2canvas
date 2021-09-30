@@ -11,7 +11,8 @@ yarn add json-to-canvas
 ## 使用
 
 ```typescript
-import json2canvas, { Json2canvasSource, SourceItemType } from 'json-to-canvas';
+import { json2canvas, SourceItemType } from 'json-to-canvas';
+import type { Json2canvasSource } from 'json-to-canvas';
 
 // 传递数据，绘制层级根据数组下标
 const sourceArray: Json2canvasSource[] = [
@@ -80,3 +81,7 @@ json2canvas({
 
 - 使用 `rollup` 进行打包编译
 - 优化打包后的产物，减小体积
+
+> 2021年09月30日 (v1.1.0)
+
+- 重构代码结构
