@@ -94,6 +94,6 @@ json2canvas({
 
 - 导出画圆角矩形方法 `drawRoundRectPath`
 
-> 2021年11月02日 (v1.1.0)
+> 2021年11月02日 (v1.1.1)
 
 - 增加画圆角图片 `ImageName.RoundImage`
