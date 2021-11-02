@@ -53,6 +53,9 @@ json2canvas({
 | :---- | :---- | :---- |
 | `json2canvas` | 通过参数获得画图数据 | (props: IJson2canvasProps) => Promise<string> |
 | `getTextHeight` | 获取多行文本的高度 | (ctx: CanvasRenderingContext2D, props: ITextAutoBreakProps) => number |
+| `loadImage` | 加载图片 | (url: string) => Promise<HTMLImageElement> |
+| `drawRoundRectPath` | 绘制圆角矩形路径 | (ctx: CanvasRenderingContext2D, props: Omit<IRoundRectType, 'x' &#124; 'y' &#124; 'backgroundColor' &#124; 'callback' &#124; 'type'>) => void |
+| `fillRoundRect` | 填充圆角矩形 | (ctx: CanvasRenderingContext2D, props: Omit<IRoundRectType, 'callback' &#124; 'type'>) => void |
 
 ## 更新
 
@@ -63,6 +66,7 @@ json2canvas({
 - 优化了代码结构
 - 修改了 `json2canvas` 的返回值, `Promise<{url: string}>` =>>> `Promise<string>`
 - 增加了 `getTextHeight` 方法，以获取多行文本的高度
+- 增加了 `loadImage` 方法
 
 
 > 2021年7月26日
@@ -88,4 +92,8 @@ json2canvas({
 
 > 2021年11月01日 (v1.0.9)
 
-- 导出画圆角矩形方法
+- 导出画圆角矩形方法 `drawRoundRectPath`
+
+> 2021年11月02日 (v1.1.0)
+
+- 增加画圆角图片 `ImageName.RoundImage`
