@@ -8,6 +8,7 @@ export enum SourceItemType {
 export enum ImageName {
   Avatar = 'avatar',
   Qrcode = 'qrcode',
+  RoundImage = 'round-image'
 }
 
 export interface ITextAutoBreak {
@@ -33,6 +34,7 @@ export interface IImageType {
   name?: ImageName;
   borderColor?: string;
   lineWidth?: number;
+  radius?: number;
   callback?: ISourceItemCallback<Omit<IImageCallbackType, 'callback' | 'type' | 'name'>>;
 }
 

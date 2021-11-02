@@ -12,6 +12,7 @@ import { toDataURL } from 'qrcode';
 import loadImage from './load-image';
 import textAutoBreak from './text-auto-breack';
 import fillRoundRect from './fill-round-rect';
+import drawRoundRectPath from './draw-round-rect-path';
 
 interface IGenerateCommonProps {
   canvasProps: ICanvasProps;
@@ -47,6 +48,7 @@ const generateImage = async (props: GenerateImageProps) => {
   const width = sourceItem.width * scale;
   const height = sourceItem.height * scale;
   const lineWidth = (sourceItem?.lineWidth ?? 4) * scale;
+  const radius = (sourceItem?.radius ?? 4) * scale;
 
   if (name === ImageName.Qrcode) {
     toDataURL(document.createElement('canvas'), sourceItem.url, (err, res) => {
@@ -71,7 +73,6 @@ const generateImage = async (props: GenerateImageProps) => {
         }
       );
     } else if (name === ImageName.Avatar) {
-      // 在 clip() 之前保存canvas状态
       ctx.save();
       ctx.strokeStyle = borderColor;
       ctx.lineWidth = lineWidth * scale;
@@ -87,7 +88,13 @@ const generateImage = async (props: GenerateImageProps) => {
       ctx.stroke();
       ctx.clip();
       ctx.drawImage(Image, x, y, width, height);
-      // 恢复到上面save()时的状态
+      ctx.restore();
+    } else if (name === ImageName.RoundImage) {
+      ctx.save();
+      ctx.translate(x, y);
+      drawRoundRectPath(ctx, { width, height, radius });
+      ctx.clip();
+      ctx.drawImage(Image, 0, 0, width, height);
       ctx.restore();
     } else {
       ctx.drawImage(Image, x, y, width, height);
