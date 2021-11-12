@@ -97,3 +97,7 @@ json2canvas({
 > 2021年11月02日 (v1.1.1)
 
 - 增加画圆角图片 `ImageName.RoundImage`
+
+> 2021年11月12日 (v1.1.2)
+
+- 优化 `load-image` cors判断

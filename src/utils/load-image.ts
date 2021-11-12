@@ -1,7 +1,7 @@
 const loadImage = (url: string): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
     const imgItem = new Image();
-    imgItem.crossOrigin = 'anonymous';
+    if (/^https?/.test(url)) imgItem.crossOrigin = 'anonymous';
     imgItem.onload = () => {
       resolve(imgItem);
     };
